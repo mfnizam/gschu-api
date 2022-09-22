@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "layspeed-app",
+  "private_key_id": "ac28856e276ca89b583b65b3086746d91746476f",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvwIBADANBgkqhkiG9w0BAQEFAASCBKkwggSlAgEAAoIBAQDPfoqYNfQjCpxP\ngAxizCeASF3ZgIjdehdBV3CVcJHU7d7nHToHlMYXObJE+sbUv+LCpgSoS26byxFv\nh67dhMmCG+fSBl7y4RqxLbXWehSkzylddaEY/LBskywgXgW6jqi+aXymHQ0LLtMy\nACFEMgl6uwSYeaCJGEpTlCLR9yHd7okBWDSBBFAtRRFuEKCuggmWBlG+aKR4eaRe\n7OT0mlV6dNEjrVvHlgOmhounzqsXBfBScI/X0plSTWuUfog2pQcDBsVgbud21ctP\nrI1i0TUIn3rKxCjUGCg7WZ8o1N98omeFBTS8EStD9luuCYNvEy3VuA3VC9Dtxw22\n1vneNqIJAgMBAAECggEAAqBaiv9uKrY29mB7rPxM+N2BoZqJcPXmCYp8rHQ8sPt9\n+tfWp5NT+BCKWlTrHh+Gfw9TUlmFFIVVysnRVkYODRQYbg2XrKmZ2Rmyj5IjRNbx\n8jgbp57a2/73ZqVQsNTe24J8j0zha22GmGoNFxQZOl5XuiyE8jihB+KMF8ix5dbE\noVeaj26zhO479UsC2mVYFDSpWfVGuRFAMOeBHr+5RLG44Znika6YDc1KRxaUNKi1\naXTBpGx67JKjMhnCHNAynOeRV+/+D4nUihUKj73CRQoUVGvj6zyciW6PagqUWxrf\nJQLqZXxvBUZrjQfzXnNWQOOHnX6769lGRTIuURbFIQKBgQD6UnmnlO+Lr2w5fv0I\nyPGz1DX0fM/JddsQYtayTiWxVr5Wgpmf26iAJ8psuo6zvRut3WfV6A7ZN52u7sMH\nS+6XBBzcRCvuPzN6sy9Av4kuBoO4WyvNYsO/9VSKQz3K2piyIayk7BAuFpIzuyWK\nXWVeLw5pX+mAbVLAlRH+BbzaqQKBgQDUM2GVQZYtd2DOGgH4fii95UfXO9KjH70+\nNY4sTA6d0A7sGIPE5uAh3ekC0SjibyUrEXHGkoP7CAKAW4cANPOxRcXKqOuF+5R0\ng3e2h8s7cXVO1nJbr7W2lNACuN7F1J4LXtOvSCrn2EyQHiVjqHIY+kwIAB3g3Uii\nuiuxjk6IYQKBgQDzboNaQk9WQ0l2/JSsF2ZeIFA8K6iSXWelHsl1auPi+t1tGeK2\nABJ0Vr3XUPF3v78MLNVOwza1bQ2OUikdjm0/NUOvvSgPsCyq9VhNmjaYqMMt5JPL\nT3HX2ofVUaDlBgIasP7I/7yYZWDWp/fRABSVLCPSu/BC8Y3ZNN7jbscCyQKBgQC3\n8m51/yva7/A32W255ksVCitzlcUraPkYcz5ygd/tx40X9sxLJMRIN2Ck84FYgHac\n1ftl4l6Mfs4ETNNDR6O0GUKzQikgtQxk0A43aZGwTtMc62KovjFsO6XxpiZfIcd7\nHdGs0Yd4ARWlnKxWro9xvY+pI8jCw7ASeAYmXbEQIQKBgQCdl9VpZ3wxf0qZEDVx\n0eUb9TPFqpLLN8gxhbAnajxEK0pG/vaoKTw1aFoAfJWJhOJcv9xkf8850vMF0N2O\nV3ljj4ebTHnSLJCS/FicWccPO8Ch3cbrR5HlSES0+cAB+iMKaSvBA378uqkPQRiE\nHHSQkNm12EGfvlenpe95gX5dNw==\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-lawjp@layspeed-app.iam.gserviceaccount.com",
+  "client_id": "115299495748044949340",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-lawjp%40layspeed-app.iam.gserviceaccount.com"
+}
