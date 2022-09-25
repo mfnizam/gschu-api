@@ -1,0 +1,1 @@
+mongorestore -d gschu latest/gschu
