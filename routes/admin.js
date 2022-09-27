@@ -53,7 +53,7 @@ router.get('/master/:jenis', async (req, res) => {
 				}
 			}, ['atasan', 'penyetuju']);
 		} else if (jenis == 'jabatan') {
-			master = await m.customModelFindByQueryPopulateLean(Jabatan, { delete: { $in: [null, false] }, ...filter }, ['fungsi', 'atasan']);
+			master = await m.customModelFindByQueryPopulateLean(Jabatan, { delete: { $in: [null, false] }, ...filter }, [{ path: 'fungsi', populate: 'atasan'}, 'atasan']);
 		} else if (jenis == 'user') {
 			master = await m.customModelFindByQuerySelectOptionLean(User, { delete: { $in: [null, false] }, ...filter }, ['-admin'], null);
 			master = master?.map(v => {
@@ -71,7 +71,7 @@ router.get('/master/:jenis', async (req, res) => {
 			throw { msg: 'Jenis data tidak tersedia' };
 		}
 
-		return res.json({ master })
+		return res.json({ [jenis]: master })
 	} catch (err) {
 		return sendError(res, 500, err);
 	}
@@ -165,6 +165,50 @@ router.post('/master/:jenis', async (req, res) => {
 	}
 })
 router.put('/master/:jenis', async (req, res) => {
+	try {
+		let jenis = req.params?.jenis;
+		let master;
+		let cekMaster;
+
+		// return res.status(500).json(req.body)
+		// todo: cek nama apakah sudah digunakan
+		if (jenis == 'zona') {
+			master = await m.customModelUpdateByIdLean(Zona, req.body._id, req.body, {});
+			if (!master) throw { msg: 'Data Zona tidak ditemukan.' }
+		} else if (jenis == 'wilayah') {
+			master = await m.customModelUpdateByIdLean(Wilayah, req.body._id, req.body, {});
+			if (!master) throw { msg: 'Data Wilayah tidak ditemukan.' }
+		} else if (jenis == 'fungsi') {
+			let organisasi;
+			for (const model of [Zona, Wilayah]) {
+				organisasi = await m.customModelFindById(model, req.body.organisasi)
+				if (organisasi) break;
+			}
+			master = await m.customModelUpdateByIdLean(Fungsi, req.body._id, { 
+				...req.body, 
+				tipe: organisasi.tipe
+			}, {});
+			if (!master) throw { msg: 'Data fungsi tidak ditemukan.' }
+		} else if (jenis == 'jabatan') {
+			master = await m.customModelUpdateByIdLean(Jabatan, req.body._id, req.body, {});
+			if (!master) throw { msg: 'Data jabatan tidak ditemukan.' }
+		} /* else if (jenis == 'kategori') {
+			cekMaster = await m.customModelFindByQueryLean(Kategori, {
+				kode: { $regex: new RegExp(req.body.kode, "i") }
+			})
+			if (cekMaster.length > 0) throw { msg: 'Kode Sudah Digunakan', field: 'kode', type: 'tidaktersedia' }
+			master = await Kategori.create(req.body);
+		} else if (jenis == 'atasan' || jenis == 'penyetuju') {
+			master = await m.customModelUpdateById(User, req.body.user, { [jenis]: true }, {});
+		}  */else {
+			throw { msg: 'Jenis data tidak tersedia' };
+		}
+		return res.json({ success: true, master, body: req.body })
+	} catch (err) {
+		return sendError(res, 500, err);
+	}
+})
+router.patch('/master/:jenis', async (req, res) => {
 	try {
 		let jenis = req.params?.jenis;
 		let master;
