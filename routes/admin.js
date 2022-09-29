@@ -188,7 +188,12 @@ router.put('/master/:jenis', async (req, res) => {
 				...req.body, 
 				tipe: organisasi.tipe
 			}, {});
+
 			if (!master) throw { msg: 'Data fungsi tidak ditemukan.' }
+			// deleting all atasan on jabatan that has fungsi (master._id)
+			if(master.atasan._id) {
+				await m.customModelUpdateManyByQueryLean(Jabatan, { fungsi: req.body._id }, { $unset: { atasan: 1 } })
+			}
 		} else if (jenis == 'jabatan') {
 			master = await m.customModelUpdateByIdLean(Jabatan, req.body._id, req.body, {});
 			if (!master) throw { msg: 'Data jabatan tidak ditemukan.' }
@@ -203,7 +208,7 @@ router.put('/master/:jenis', async (req, res) => {
 		}  */else {
 			throw { msg: 'Jenis data tidak tersedia' };
 		}
-		return res.json({ success: true, master, body: req.body })
+		return res.json({ success: true, master })
 	} catch (err) {
 		return sendError(res, 500, err);
 	}
@@ -232,7 +237,12 @@ router.patch('/master/:jenis', async (req, res) => {
 				...req.body, 
 				tipe: organisasi.tipe
 			}, {});
+
 			if (!master) throw { msg: 'Data fungsi tidak ditemukan.' }
+			// deleting all atasan on jabatan that has fungsi (master._id)
+			if(master.atasan) {
+				await m.customModelUpdateManyByQueryLean(Jabatan, { fungsi: req.body._id }, { $unset: { atasan: 1 } }, { new: true })
+			}
 		} else if (jenis == 'jabatan') {
 			master = await m.customModelUpdateByIdLean(Jabatan, req.body._id, req.body, {});
 			if (!master) throw { msg: 'Data jabatan tidak ditemukan.' }
@@ -247,7 +257,7 @@ router.patch('/master/:jenis', async (req, res) => {
 		}  */else {
 			throw { msg: 'Jenis data tidak tersedia' };
 		}
-		return res.json({ success: true, master, body: req.body })
+		return res.json({ success: true, master })
 	} catch (err) {
 		return sendError(res, 500, err);
 	}
@@ -276,6 +286,10 @@ router.delete('/master/:jenis', async (req, res) => {
 	} catch (err) {
 		return sendError(res, 500, err);
 	}
+})
+
+router.get('/perminataan', async (req, res) => {
+	
 })
 
 router.get('/cekfungsipenyetuju', async (req, res) => {
