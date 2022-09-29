@@ -121,9 +121,11 @@ router.post('/permintaan', /* upload.any(), */ multer().any(), async (req, res) 
   try {
     let permintaan;
     let fungsi = req.user?.fungsi;
+    let jabatan = req.user?.jabatan;
     let kategori = await m.customModelFindByIdLean(Kategori, req.body.kategori);
 
     if (!fungsi) throw { field: 'fungsi', msg: 'Tidak dapat menambahkan permintaan karena fungsi tidak terdaftar' }
+    if (!jabatan) throw { field: 'jabatan', msg: 'Tidak dapat menambahkan permintaan karena jabatan anda tidak memiliki atasan penyetuju. Hubungi Admin' }
     if (!kategori) throw { field: 'kategori', msg: 'Tidak dapat menambahkan permintaan karena jenis permintaan tidak terdaftar' }
 
     let upload;
@@ -187,8 +189,12 @@ router.post('/permintaan', /* upload.any(), */ multer().any(), async (req, res) 
       kategori: kategori._id,
       permintaan: permintaan._id,
       jenis: kategori.kode,
+      // TODO: Please refactor this code.. its ugly
       ...fungsi.atasan && (!req.user._id.equals(fungsi.atasan) || req.user._id.equals(fungsi.penyetuju)) ? {
         diketahui: { oleh: fungsi.atasan }
+      } :
+      jabatan.atasan && (!req.user._id.equals(jabatan.atasan) || req.user._id.equals(jabatan.penyetuju)) ? {
+        diketahui: { oleh: jabatan.atasan }
       } : {
         diketahui: { disabled: true }
       },
