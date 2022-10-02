@@ -1,1 +1,1 @@
-mongorestore -d gschu latest/gschu
+mongorestore -d gschu 01102022_173846_WIB/gschu

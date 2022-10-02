@@ -1,0 +1,1 @@
+mongorestore --uri="mongodb://mfnizam:mfnizam@mfnizam-shard-00-00.qtvyt.mongodb.net:27017/gschu?authSource=admin&replicaSet=atlas-lazezm-shard-0&w=majority&readPreference=primary&retryWrites=true&ssl=true" -d="gschu" 25092022_175825_WIB/gschu/

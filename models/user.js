@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const Fungsi = require('./fungsi');
+const Jabatan = require('./jabatan');
 
 const UserSchema = mongoose.Schema({
 	namaLengkap		: { type: String, required: true },
@@ -40,11 +41,11 @@ let cekAtasanPenyetuju = async function(doc) {
 	if(!doc) return;
 	if(Array.isArray(doc)) {
 		for(let i = 0; i < doc.length; i++){
-			doc[i].atasan = (await Fungsi.exists({ atasan: doc[i]._id }))? true : undefined;
+			doc[i].atasan = (await Fungsi.exists({ atasan: doc[i]._id })) || (await Jabatan.exists({ atasan: doc[i]._id }))? true : undefined;
 			doc[i].penyetuju = (await Fungsi.exists({ penyetuju: doc[i]._id }))? true : undefined;	
 		}
 	} else {
-		doc.atasan = (await Fungsi.exists({ atasan: doc._id }))? true : undefined;
+		doc.atasan = (await Fungsi.exists({ atasan: doc._id })) || (await Jabatan.exists({ atasan: doc._id }))? true : undefined;
 		doc.penyetuju = (await Fungsi.exists({ penyetuju: doc._id }))? true : undefined;
 	}
 }

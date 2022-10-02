@@ -123,9 +123,10 @@ router.post('/permintaan', /* upload.any(), */ multer().any(), async (req, res) 
     let fungsi = req.user?.fungsi;
     let jabatan = req.user?.jabatan;
     let kategori = await m.customModelFindByIdLean(Kategori, req.body.kategori);
-
-    if (!fungsi) throw { field: 'fungsi', msg: 'Tidak dapat menambahkan permintaan karena fungsi tidak terdaftar' }
-    if (!jabatan) throw { field: 'jabatan', msg: 'Tidak dapat menambahkan permintaan karena jabatan anda tidak memiliki atasan penyetuju. Hubungi Admin' }
+    
+    if (!fungsi) throw { field: 'fungsi', msg: 'Tidak dapat menambahkan permintaan karena anda belum memilih fungsi' }
+    if (!jabatan) throw { field: 'jabatan', msg: 'Tidak dapat menambahkan permintaan karena anda belum memilih jabatan' }
+    // if (!jabatan) throw { field: 'jabatan', msg: 'Tidak dapat menambahkan permintaan karena jabatan anda tidak memiliki atasan penyetuju. Hubungi Admin' }
     if (!kategori) throw { field: 'kategori', msg: 'Tidak dapat menambahkan permintaan karena jenis permintaan tidak terdaftar' }
 
     let upload;

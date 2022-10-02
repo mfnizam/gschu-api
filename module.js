@@ -76,7 +76,7 @@ mainModuleExports.customModelFindByQuerySelectOptionPopulate = (model, query, se
 	return model.find(query, select, { ...option, new: true }).populate(populate).exec();
 }
 mainModuleExports.customModelFindByQuerySelectOptionPopulateLean = (model, query, select, option, populate) => {
-	return model.find(query, select, { ...option, new: true }).populate(populate).exec();
+	return model.find(query, select, { ...option, new: true }).populate(populate).lean().exec();
 }
 mainModuleExports.customModelFindByQueryDistinct = (model, query, distinct) => {
 	return model.find(query).distinct(distinct).exec();

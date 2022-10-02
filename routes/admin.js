@@ -35,6 +35,7 @@ router.get('/master/:jenis', async (req, res) => {
 			filter = JSON.parse(req.query.filter);
 
 		let master = [];
+		let jabatanHasAtasan = [];
 		if (jenis == 'zona') {
 			master = await m.customModelFindByQueryLean(Zona, { delete: { $in: [null, false] }, ...filter });
 		} else if (jenis == 'wilayah') {
@@ -44,7 +45,7 @@ router.get('/master/:jenis', async (req, res) => {
 			let wilayahmaster = await m.customModelFindByQueryLean(Wilayah, { delete: { $in: [null, false] }, ...filter });
 			master = [...zonamaster, ...wilayahmaster]
 		} else if (jenis == 'fungsi') {
-			master = await m.customModelFindByQuerySelectOptionPopulate(Fungsi, { delete: { $in: [null, false] }, ...filter }, null, { 
+			master = await m.customModelFindByQuerySelectOptionPopulateLean(Fungsi, { delete: { $in: [null, false] }, ...filter }, null, { 
 				sort: { 
 					organisasi: 1,
 					// atasan: -1, 
@@ -52,6 +53,10 @@ router.get('/master/:jenis', async (req, res) => {
 					// ttdAtasan: -1 
 				}
 			}, ['atasan', 'penyetuju']);
+			
+			jabatanHasAtasan = await m.customModelFindByQueryDistinctLean(Jabatan, { atasan: { $nin: [null, undefined] }}, 'fungsi')
+			master = master.map(m => ({ ...m, ...jabatanHasAtasan.find(v => v._id.toString() == m._id.toString())? { jabatanHasAtasan: true } : {} }))
+
 		} else if (jenis == 'jabatan') {
 			master = await m.customModelFindByQueryPopulateLean(Jabatan, { delete: { $in: [null, false] }, ...filter }, [{ path: 'fungsi', populate: 'atasan'}, 'atasan']);
 		} else if (jenis == 'user') {
@@ -71,7 +76,7 @@ router.get('/master/:jenis', async (req, res) => {
 			throw { msg: 'Jenis data tidak tersedia' };
 		}
 
-		return res.json({ [jenis]: master })
+		return res.json({ [jenis]: master, jabatanHasAtasan })
 	} catch (err) {
 		return sendError(res, 500, err);
 	}
