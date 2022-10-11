@@ -1,0 +1,2 @@
+{"_id":{"$oid":"63398256523ec73f922c60d6"},"alamat":"test HA","tgl":{"$date":"2022-10-03T12:18:00Z"},"perbaikan":[{"jenis":"Perbaikan Atap","foto":"","_id":null}],"catatan":"Catatan Ha","__v":0}
+{"_id":{"$oid":"63398f8993acd4b73b014925"},"alamat":"Test HY","tgl":{"$date":"2022-10-19T13:17:00Z"},"perbaikan":[{"jenis":"Pergantian Lampu","foto":"","_id":null}],"catatan":"Catatan HY","__v":0}

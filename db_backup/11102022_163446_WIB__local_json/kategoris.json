@@ -1,0 +1,12 @@
+{"_id":{"$oid":"62bc78629a5a8f3e802d81f2"},"kode":"rdp","nama":"Perbaikan RDP & Fasum","__v":0}
+{"_id":{"$oid":"62bc8665059db0d11fde1bde"},"kode":"furniture","nama":"Permintaan \\nFurniture","__v":0}
+{"_id":{"$oid":"62bc89b5059db0d11fde1c3a"},"kode":"rumput","nama":"Potong Rumput / Tebang Pohon","__v":0}
+{"_id":{"$oid":"62bc89c5059db0d11fde1c46"},"kode":"ac","nama":"Perawatan & Perbaikan AC","__v":0}
+{"_id":{"$oid":"62bc89d3059db0d11fde1c52"},"kode":"atk","nama":"Alat Tulis \\nKantor","__v":0}
+{"_id":{"$oid":"62bc89e1059db0d11fde1c5e"},"kode":"snack","nama":"Snack & Makanan Berat","__v":0}
+{"_id":{"$oid":"62bc89ee059db0d11fde1c6a"},"kode":"krp","nama":"Kend. Ringan Penumpang","__v":0}
+{"_id":{"$oid":"62bc89fb059db0d11fde1c76"},"kode":"mess","nama":"Mess / \\nPenginapan","__v":0}
+{"_id":{"$oid":"62bc8a06059db0d11fde1c82"},"kode":"dokumen","nama":"Pengiriman \\nDokumen","__v":0}
+{"_id":{"$oid":"62bc8a13059db0d11fde1c8e"},"kode":"galon","nama":"Air Mineral \\n(Galon)","__v":0}
+{"_id":{"$oid":"62bc8a1e059db0d11fde1c9a"},"kode":"acara","nama":"Penyiapan \\nAcara","__v":0}
+{"_id":{"$oid":"62bc8a2b059db0d11fde1ca6"},"kode":"peralatan","nama":"Peralatan (Lampu & Kebersihan)","__v":0}
