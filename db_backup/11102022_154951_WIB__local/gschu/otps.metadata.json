@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"},{"v":{"$numberInt":"2"},"key":{"kadaluarsa":{"$numberInt":"1"}},"name":"kadaluarsa_1","background":true,"expireAfterSeconds":{"$numberInt":"60"}}],"uuid":"dc9843d523934819a6837fffa236177c","collectionName":"otps","type":"collection"}

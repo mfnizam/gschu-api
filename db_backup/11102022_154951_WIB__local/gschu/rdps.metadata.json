@@ -1,0 +1,1 @@
+{"indexes":[{"v":{"$numberInt":"2"},"key":{"_id":{"$numberInt":"1"}},"name":"_id_"}],"uuid":"afb5dacd79dc439ba49a7ac7705c0437","collectionName":"rdps","type":"collection"}
