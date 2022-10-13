@@ -12,7 +12,8 @@ const User = require('../models/user'),
 	Wilayah = require('../models/wilayah'),
 	Fungsi = require('../models/fungsi'),
 	Jabatan = require('../models/jabatan'),
-	Kategori = require('../models/kategori');
+	Kategori = require('../models/kategori'),
+	Permintaan = require('../models/permintaan');
 
 router.get('/master/semuatotal', async (req, res) => {
 	try {
@@ -24,7 +25,7 @@ router.get('/master/semuatotal', async (req, res) => {
 		let jabatan = await Jabatan.count(filter);
 		let user = await User.count(filter);
 
-		return res.json({ total: { zona, wilayah, organisasi, fungsi, jabatan, user }})
+		return res.json({ total: { zona, wilayah, organisasi, fungsi, jabatan, user } })
 	} catch (err) {
 		return sendError(res, 500, err);
 	}
@@ -45,20 +46,20 @@ router.get('/master/:jenis', async (req, res) => {
 			let wilayahmaster = await m.customModelFindByQueryLean(Wilayah, { delete: { $in: [null, false] }, ...filter });
 			master = [...zonamaster, ...wilayahmaster]
 		} else if (jenis == 'fungsi') {
-			master = await m.customModelFindByQuerySelectOptionPopulateLean(Fungsi, { delete: { $in: [null, false] }, ...filter }, null, { 
-				sort: { 
+			master = await m.customModelFindByQuerySelectOptionPopulateLean(Fungsi, { delete: { $in: [null, false] }, ...filter }, null, {
+				sort: {
 					organisasi: 1,
 					// atasan: -1, 
 					// penyetuju: -1, 
 					// ttdAtasan: -1 
 				}
 			}, ['atasan', 'penyetuju']);
-			
-			jabatanHasAtasan = await m.customModelFindByQueryDistinctLean(Jabatan, { atasan: { $nin: [null, undefined] }}, 'fungsi')
-			master = master.map(m => ({ ...m, ...jabatanHasAtasan.find(v => v._id.toString() == m._id.toString())? { jabatanHasAtasan: true } : {} }))
+
+			jabatanHasAtasan = await m.customModelFindByQueryDistinctLean(Jabatan, { atasan: { $nin: [null, undefined] } }, 'fungsi')
+			master = master.map(m => ({ ...m, ...jabatanHasAtasan.find(v => v._id.toString() == m._id.toString()) ? { jabatanHasAtasan: true } : {} }))
 
 		} else if (jenis == 'jabatan') {
-			master = await m.customModelFindByQueryPopulateLean(Jabatan, { delete: { $in: [null, false] }, ...filter }, [{ path: 'fungsi', populate: 'atasan'}, 'atasan']);
+			master = await m.customModelFindByQueryPopulateLean(Jabatan, { delete: { $in: [null, false] }, ...filter }, [{ path: 'fungsi', populate: 'atasan' }, 'atasan']);
 		} else if (jenis == 'user') {
 			master = await m.customModelFindByQuerySelectOptionLean(User, { delete: { $in: [null, false] }, ...filter }, ['-admin'], null);
 			master = master?.map(v => {
@@ -189,14 +190,14 @@ router.put('/master/:jenis', async (req, res) => {
 				organisasi = await m.customModelFindById(model, req.body.organisasi)
 				if (organisasi) break;
 			}
-			master = await m.customModelUpdateByIdLean(Fungsi, req.body._id, { 
-				...req.body, 
+			master = await m.customModelUpdateByIdLean(Fungsi, req.body._id, {
+				...req.body,
 				tipe: organisasi.tipe
 			}, {});
 
 			if (!master) throw { msg: 'Data fungsi tidak ditemukan.' }
 			// deleting all atasan on jabatan that has fungsi (master._id)
-			if(master.atasan._id) {
+			if (master.atasan._id) {
 				await m.customModelUpdateManyByQueryLean(Jabatan, { fungsi: req.body._id }, { $unset: { atasan: 1 } })
 			}
 		} else if (jenis == 'jabatan') {
@@ -238,14 +239,14 @@ router.patch('/master/:jenis', async (req, res) => {
 				organisasi = await m.customModelFindById(model, req.body.organisasi)
 				if (organisasi) break;
 			}
-			master = await m.customModelUpdateByIdLean(Fungsi, req.body._id, { 
-				...req.body, 
+			master = await m.customModelUpdateByIdLean(Fungsi, req.body._id, {
+				...req.body,
 				tipe: organisasi.tipe
 			}, {});
 
 			if (!master) throw { msg: 'Data fungsi tidak ditemukan.' }
 			// deleting all atasan on jabatan that has fungsi (master._id)
-			if(master.atasan) {
+			if (master.atasan) {
 				await m.customModelUpdateManyByQueryLean(Jabatan, { fungsi: req.body._id }, { $unset: { atasan: 1 } }, { new: true })
 			}
 		} else if (jenis == 'jabatan') {
@@ -293,8 +294,28 @@ router.delete('/master/:jenis', async (req, res) => {
 	}
 })
 
-router.get('/perminataan', async (req, res) => {
-	
+router.get('/permintaan', async (req, res) => {
+	try {
+		let
+			search = req.query.search,
+			sort = req.query.sort || 'createAt',
+			order = req.query.order || 'desc',
+			page = Number(req.query.page),
+			size = Number(req.query.size) || undefined;
+
+		let query = {
+			// TODO: add query to filter by fungsi, kategori and date
+		}
+		let permintaan = await m.customModelFindByQuerySelectOptionLean(Permintaan, query, null, {
+			sort: { [sort]: order == 'asc' ? 1 : -1 },
+			limit: size
+		});
+		let total = await Permintaan.count(query);
+
+		return res.json({ permintaan, total })
+	} catch (err) {
+		return sendError(res, 500, err);
+	}
 })
 
 router.get('/cekfungsipenyetuju', async (req, res) => {
