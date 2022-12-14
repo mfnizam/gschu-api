@@ -19,7 +19,7 @@ const
     })
   }) */;
 
-const otherServerUrl = "https://gschu.asnatsuroyya.com/";
+const otherServerUrl = "https://gschuz1.com/";
 
 //moduls
 const m = require('../../module');

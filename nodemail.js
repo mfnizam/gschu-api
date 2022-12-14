@@ -1,13 +1,13 @@
 let nodeMailer = require('nodemailer');
 
 let transporter = nodeMailer.createTransport({
-	name: 'Asna Tsuroyya',
-	host: 'asnatsuroyya.com',
+	name: 'GSCHU Pertamina Zona 1',
+	host: 'gschuz1.com',
 	port: 465,
 	secure: true,
 	auth: {
-		user: 'noreply@asnatsuroyya.com',
-		pass: '(1asnatsuroyyanoreply1)'
+		user: 'noreply@gschuz1.com',
+		pass: '(gschuz1)'
 	}
 });
 transporter.verify(function (error, success) {
