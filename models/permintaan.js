@@ -22,6 +22,7 @@ const PermintaanSchema = mongoose.Schema({
   }) },
 
   selesai         : { type: Boolean },
+  penerima        : { type: String },
 
   peringkat       : { type: Number },
   ulasan          : { type: String },

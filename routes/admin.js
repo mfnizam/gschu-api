@@ -40,7 +40,9 @@ router.get('/master/:jenis', async (req, res) => {
 		if (jenis == 'zona') {
 			master = await m.customModelFindByQueryLean(Zona, { delete: { $in: [null, false] }, ...filter });
 		} else if (jenis == 'wilayah') {
-			master = await m.customModelFindByQueryLean(Wilayah, { delete: { $in: [null, false] }, ...filter });
+			let masterWilayah = await m.customModelFindByQueryLean(Wilayah, { delete: { $in: [null, false] }, ...filter });
+			let masterZona = await m.customModelFindByQueryLean(Zona, { delete: { $in: [null, false] }, ...filter });
+			master = [...masterWilayah, ...masterZona]
 		} else if (jenis == 'organisasi') {
 			let zonamaster = await m.customModelFindByQueryLean(Zona, { delete: { $in: [null, false] }, ...filter });
 			let wilayahmaster = await m.customModelFindByQueryLean(Wilayah, { delete: { $in: [null, false] }, ...filter });
@@ -313,6 +315,39 @@ router.get('/permintaan', async (req, res) => {
 		let total = await Permintaan.count(query);
 
 		return res.json({ permintaan, total })
+	} catch (err) {
+		return sendError(res, 500, err);
+	}
+})
+
+router.patch('/kategori', async (req, res) => {
+	try {
+		let kategori = await m.customModelUpdateByIdLean(Kategori, req.body._id, req.body, {});
+		return res.json({ success: true, kategori })
+	} catch (err) {
+		return sendError(res, 500, err);
+	}
+})
+
+router.get('/pengguna', async (req, res) => {
+	try {
+		let
+			search = req.query.search,
+			sort = req.query.sort || 'createAt',
+			order = req.query.order || 'desc',
+			page = Number(req.query.page),
+			size = Number(req.query.size) || undefined;
+
+		let query = {
+			// TODO: add query to filter by fungsi, kategori and date
+		}
+		let pengguna = await m.customModelFindByQuerySelectOptionLean(User, query, null, {
+			sort: { [sort]: order == 'asc' ? 1 : -1 },
+			limit: size
+		});
+		let total = await User.count(query);
+
+		return res.json({ pengguna, total })
 	} catch (err) {
 		return sendError(res, 500, err);
 	}

@@ -184,30 +184,39 @@ router.post('/permintaan', /* upload.any(), */ multer().any(), async (req, res) 
     }
 
     let totalPermintaan = await Permintaan.count({});
+    let atasan = kategori.atasan? (fungsi.atasan || jabatan.atasan) : null;
     let newPermintaan = await Permintaan.create({
       noSurat: String(Number(totalPermintaan) + 1).padStart(4, '0') + '/' + (fungsi.kode || '-') + '/' + new Date().getFullYear(),
       user: req.user._id,
       kategori: kategori._id,
       permintaan: permintaan._id,
       jenis: kategori.kode,
-      // TODO: Please refactor this code.. its ugly
-      ...fungsi.atasan && (!req.user._id.equals(fungsi.atasan) || req.user._id.equals(fungsi.penyetuju)) ? {
-        diketahui: { oleh: fungsi.atasan }
-      } :
-      jabatan.atasan && (!req.user._id.equals(jabatan.atasan) || req.user._id.equals(jabatan.penyetuju)) ? {
-        diketahui: { oleh: jabatan.atasan }
-      } : {
-        diketahui: { disabled: true }
+      
+      diketahui: {
+        oleh: atasan,
+        disabled: !atasan
       },
-      ...fungsi.penyetuju ? {
-        disetujui: {
-          oleh: req.user.fungsi.penyetuju,
-          ...req.user._id.equals(fungsi.penyetuju) ? { status: 1 } : {}
-        }
-      } : {}
+      disetujui: { oleh: fungsi.penyetuju }
+
+      // TODO: Please refactor this code.. its ugly
+      // ...fungsi.atasan && (!req.user._id.equals(fungsi.atasan) || req.user._id.equals(fungsi.penyetuju)) ? {
+      //   diketahui: { oleh: fungsi.atasan }
+      // } :
+      // jabatan.atasan && (!req.user._id.equals(jabatan.atasan) || req.user._id.equals(jabatan.penyetuju)) ? {
+      //   diketahui: { oleh: jabatan.atasan }
+      // } : {
+      //   diketahui: { disabled: true }
+      // },
+      // ...fungsi.penyetuju ? {
+      //   disetujui: {
+      //     oleh: req.user.fungsi.penyetuju,
+      //     ...req.user._id.equals(fungsi.penyetuju) ? { status: 1 } : {}
+      //   }
+      // } : {}
     })
 
     return res.json({ permintaan: newPermintaan })
+    // return res.json(fungsi)
   } catch (err) {
     return sendError(res, 500, err);
   }
@@ -280,6 +289,14 @@ router.patch('/permintaan', /* upload.any(), */ multer().any(), async (req, res)
     return res.json({ permintaan: updatedpermintaan })
   } catch (err) {
     return sendError(res, 500, err);
+  }
+})
+router.patch('/permintaan/selesai', async (req, res) => {
+  try {
+    let permintaan = await m.customModelUpdateByIdLean(Permintaan, req.body._id, { selesai: true, 'penerima': req.body.penerima }, {});
+    return res.json({ permintaan })
+  } catch (error) {
+    return sendError(res, 500, error);
   }
 })
 router.post('/ulasan', async (req, res) => {

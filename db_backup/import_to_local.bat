@@ -1,1 +1,1 @@
-mongorestore -d gschu 01102022_173846_WIB/gschu
+mongorestore -d gschu 11102022_154951_WIB__local/gschu

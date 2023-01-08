@@ -1,8 +1,6 @@
 const router = require('express').Router(),
   m = require('../../module'),
-  User = require('../../models/user'),
   Notifikasi = require('../../models/notifikasi'),
-  Fungsi = require('../../models/fungsi'),
   Permintaan = require('../../models/permintaan');
 
 router.get('/beranda', async (req, res) => {
@@ -19,23 +17,11 @@ router.get('/beranda', async (req, res) => {
     let totalPermintaan = await Permintaan.count(queryPermintaan);
 
     let queryPersetujuan = {
-      // 'disetujui.oleh': req.user._id,
-      // $and: [
-      //   { $or: [{ 'diketahui.status': 1 }, { 'diketahui.disabled': true }] },
-      //   { $or: [{ 'disetujui.status': { $lt: 1 } }, { 'disetujui.status': null }] }
-      // ],
-      $or: [{
-        'diketahui.oleh': req.user._id,
-        'diketahui.status': 0,
-      }, {
-        'disetujui.oleh': req.user._id,
-        'disetujui.status': 0,
-        $or: [{
-          'diketahui.status': 1
-        }, { 
-          'diketahui.disabled': true
-        }]
-      }],
+      'disetujui.oleh': req.user._id,
+      $and: [
+        { $or: [{ 'diketahui.status': 1 }, { 'diketahui.disabled': true }] },
+        { $or: [{ 'disetujui.status': { $lt: 1 } }, { 'disetujui.status': null }] }
+      ],
       selesai: { $ne: true }
     }
     let persetujuan = await m.customModelFindByQuerySelectOptionLean(Permintaan, queryPersetujuan, null, {
@@ -56,12 +42,7 @@ router.get('/persetujuan/:_id', async (req, res) => {
   try {
     let permintaan = await m.customModelFindOneByQueryLean(Permintaan, {
       _id: req.params._id,
-      $or: [{
-        'diketahui.oleh': req.user._id,
-      }, {
-        'disetujui.oleh': req.user._id,
-      }],
-      // $or: [{ 'diketahui.status': 1 }, { 'diketahui.disabled': true }]
+      $or: [{ 'diketahui.status': 1 }, { 'diketahui.disabled': true }]
     });
     // if(!permintaan) throw { field: 'status', msg: 'Permintaan tidak tersedia' }
     return res.json({ permintaan })
@@ -69,29 +50,14 @@ router.get('/persetujuan/:_id', async (req, res) => {
     return sendError(res, 500, err);
   }
 })
-// TODO: karena penyetuju juga bisa jadi atasan maka seharus nya bisa acc melalui ini
 router.patch('/persetujuan/setuju', async (req, res) => {
   try {
-    let permintaan = await m.customModelFindById(Permintaan, req.body._id);
+    let permintaan = await m.customModelUpdateByQueryLean(Permintaan, {
+      _id: req.body._id,
+      $or: [{ 'diketahui.status': 1 }, { 'diketahui.disabled': true }],
+      selesai: { $ne: true }
+    }, { 'disetujui.status': 1 }, {})
     if (!permintaan) throw { field: 'status', msg: 'Permintaan tidak tersedia' }
-
-    if(permintaan.diketahui.oleh?._id.toString() == req.user._id.toString()){
-      permintaan.diketahui.status = 1
-    }
-
-    if(permintaan.disetujui.oleh._id.toString() == req.user._id.toString()){
-      permintaan.disetujui.status = 1
-    }
-
-    permintaan.save();
-    
-    // let permintaan = await m.customModelUpdateByQueryLean(Permintaan, {
-    //   _id: req.body._id,
-    //   $or: [{ 'diketahui.status': 1 }, { 'diketahui.disabled': true }],
-    //   selesai: { $ne: true }
-    // }, { 'disetujui.status': 1 }, {})
-
-    // if (!permintaan) throw { field: 'status', msg: 'Permintaan tidak tersedia' }
 
     await Notifikasi.create({
       diperuntukkan: permintaan._id,
@@ -108,36 +74,19 @@ router.patch('/persetujuan/setuju', async (req, res) => {
       }
     }).catch(() => null)
 
-    // return res.json(permintaan?.disetujui?.status == 1 ? true : false)
-    return res.json(true)
+    return res.json(permintaan?.disetujui?.status == 1 ? true : false)
   } catch (err) {
     return sendError(res, 500, err);
   }
 })
-// TODO: karena penyetuju juga bisa jadi atasan maka seharus nya bisa tolak melalui ini
 router.patch('/persetujuan/tolak', async (req, res) => {
   try {
-    let permintaan = await m.customModelFindById(Permintaan, req.body._id);
+    let permintaan = await m.customModelUpdateByQueryLean(Permintaan, {
+      _id: req.body._id,
+      $or: [{ 'diketahui.status': 1 }, { 'diketahui.disabled': true }],
+      selesai: { $ne: true }
+    }, { 'disetujui.status': 2, 'disetujui.catatan': req.body.catatan }, {})
     if (!permintaan) throw { field: 'status', msg: 'Permintaan tidak tersedia' }
-
-    if(permintaan.diketahui.oleh?._id.toString() == req.user._id.toString()){
-      permintaan.diketahui.status = 2
-      permintaan.diketahui.catatan = req.body.catatan
-    }
-    
-    if(permintaan.disetujui.oleh._id.toString() == req.user._id.toString()){
-      permintaan.disetujui.status = 2
-      permintaan.disetujui.catatan = req.body.catatan
-    }
-
-    permintaan.save();
-
-    // let permintaan = await m.customModelUpdateByQueryLean(Permintaan, {
-    //   _id: req.body._id,
-    //   $or: [{ 'diketahui.status': 1 }, { 'diketahui.disabled': true }],
-    //   selesai: { $ne: true }
-    // }, { 'disetujui.status': 2, 'disetujui.catatan': req.body.catatan }, {})
-    // if (!permintaan) throw { field: 'status', msg: 'Permintaan tidak tersedia' }
 
     await Notifikasi.create({
       diperuntukkan: permintaan._id,
@@ -155,8 +104,7 @@ router.patch('/persetujuan/tolak', async (req, res) => {
       }
     }).catch(() => null)
 
-    // return res.json(permintaan?.disetujui?.status == 2 ? true : false)
-    return res.json(true)
+    return res.json(permintaan?.disetujui?.status == 2 ? true : false)
   } catch (err) {
     return sendError(res, 500, err);
   }
@@ -201,23 +149,11 @@ router.get('/menunggu', async (req, res) => {
 
     // match: { age: { $gte: 21 } } ganti user dengan populate match
     let query = {
-      // 'disetujui.oleh': req.user._id,
-      // $and: [
-      //   { $or: [{ 'diketahui.status': 1 }, { 'diketahui.disabled': true }] },
-      //   { $or: [{ 'disetujui.status': { $lt: 1 } }, { 'disetujui.status': null }] }
-      // ],
-      $or: [{
-        'diketahui.oleh': req.user._id,
-        'diketahui.status': 0,
-      }, {
-        'disetujui.oleh': req.user._id,
-        'disetujui.status': 0,
-        $or: [{
-          'diketahui.status': 1
-        }, { 
-          'diketahui.disabled': true
-        }]
-      }],
+      'disetujui.oleh': req.user._id,
+      $and: [
+        { $or: [{ 'diketahui.status': 1 }, { 'diketahui.disabled': true }] },
+        { $or: [{ 'disetujui.status': { $lt: 1 } }, { 'disetujui.status': null }] }
+      ],
       selesai: { $ne: true }
     }
     let permintaan = await m.customModelFindByQuerySelectOptionLean(Permintaan, query, null, {
@@ -231,7 +167,7 @@ router.get('/menunggu', async (req, res) => {
     return sendError(res, 500, err);
   }
 })
-router.get('/disetujui', async (req, res) => { // data disetujui atasan sama dengan data diproses.. karna setelah disetujui langsung di proses
+router.get('/disetujui', async (req, res) => {
   try {
     let
       search = req.query.search,
@@ -241,16 +177,9 @@ router.get('/disetujui', async (req, res) => { // data disetujui atasan sama den
       size = Number(req.query.size) || undefined;
 
     let query = {
-      // 'disetujui.oleh': req.user._id,
-      // $or: [{ 'diketahui.status': 1 }, { 'diketahui.disabled': true }],
-      // 'disetujui.status': 1,
-      $or: [{
-        'diketahui.oleh': req.user._id,
-        'diketahui.status': 1,
-      }, {
-        'disetujui.oleh': req.user._id,
-        'disetujui.status': 1,
-      }],
+      'disetujui.oleh': req.user._id,
+      $or: [{ 'diketahui.status': 1 }, { 'diketahui.disabled': true }],
+      'disetujui.status': 1,
       selesai: { $ne: true }
     }
     let permintaan = await m.customModelFindByQuerySelectOptionLean(Permintaan, query, null, {
@@ -274,16 +203,9 @@ router.get('/ditolak', async (req, res) => {
       size = Number(req.query.size) || undefined;
 
     let query = {
-      // 'disetujui.oleh': req.user._id,
-      // $or: [{ 'diketahui.status': 1 }, { 'diketahui.disabled': true }],
-      // 'disetujui.status': 2,
-      $or: [{
-        'diketahui.oleh': req.user._id,
-        'diketahui.status': 2,
-      }, {
-        'disetujui.oleh': req.user._id,
-        'disetujui.status': 2,
-      }],
+      'disetujui.oleh': req.user._id,
+      $or: [{ 'diketahui.status': 1 }, { 'diketahui.disabled': true }],
+      'disetujui.status': 2,
       selesai: { $ne: true }
     }
     let permintaan = await m.customModelFindByQuerySelectOptionLean(Permintaan, query, null, {

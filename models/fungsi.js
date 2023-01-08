@@ -9,7 +9,7 @@ const FungsiSchema = mongoose.Schema({
 	organisasi 		    : { type: Schema.Types.ObjectId, required: true, refPath: 'tipe' },
   tipe     		    	: { type: String, required: true, enum: ['zona', 'wilayah'] },
 
-	ttdAtasan					: { type: Boolean },
+	ttdAtasan					: { type: Boolean }, // TODO: Kyk e ini ga dibutuhkan
 	atasan 						: { type: Schema.Types.ObjectId, ref: 'user' },
 	penyetuju 				: { type: Schema.Types.ObjectId, ref: 'user' },
 

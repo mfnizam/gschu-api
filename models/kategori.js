@@ -2,8 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const KategoriSchema = mongoose.Schema({
-	kode     		: { type: String, required: true },
-	nama  			: { type: String, required: true },
+	kode     						: { type: String, required: true },
+	nama  							: { type: String, required: true },
+	atasan 							: { type: Boolean, required: true, default: true },
+	diselesaikanPemohon	: { type: Boolean, required: true, default: false },
 })
 
 let escapeNewline = function(doc) {

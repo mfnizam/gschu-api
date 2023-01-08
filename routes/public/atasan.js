@@ -37,6 +37,7 @@ router.get('/beranda', async (req, res) => {
   }
 })
 
+// TODO: cegah pemohon menyetujui atau menolak permintaannya sendiri
 router.get('/persetujuan/:_id', async (req, res) => {
   try {
     let permintaan = await m.customModelFindOneByQueryLean(Permintaan, { _id: req.params._id });
@@ -56,7 +57,7 @@ router.patch('/persetujuan/setuju', async (req, res) => {
       kategori: permintaan.kategori._id,
       user: permintaan.user._id,
       nama: 'Permintaan Disetujui Atasan',
-      konten: 'Permintaan ' + permintaan.kategori.nama + ' anda dengan No Surat ' + permintaan.noSurat + ' telah disetujui oleh atasan - ' +
+      konten: permintaan.kategori.nama + ' anda dengan No Surat ' + permintaan.noSurat + ' telah disetujui oleh atasan - ' +
         capitalize(permintaan.diketahui?.oleh?.namaLengkap) + '( ' + permintaan.diketahui?.oleh?.jabatan?.nama + ' )' +
         ', Selanjutnya permintaan anda akan diteruskan ke Fungsi ' +
         permintaan.disetujui?.oleh?.fungsi?.nama + ' untuk direview.',
@@ -82,7 +83,7 @@ router.patch('/persetujuan/tolak', async (req, res) => {
       kategori: permintaan.kategori._id,
       user: permintaan.user._id,
       nama: 'Permintaan Ditolak Atasan',
-      konten: 'Permintaan ' + permintaan.kategori.nama + ' anda dengan No Surat ' + permintaan.noSurat + 'telah ditolak oleh atasan - ' +
+      konten: permintaan.kategori.nama + ' anda dengan No Surat ' + permintaan.noSurat + 'telah ditolak oleh atasan - ' +
         capitalize(permintaan.diketahui?.oleh?.namaLengkap) + '( ' + permintaan.diketahui?.oleh?.jabatan?.nama + ' )' +
         ', Mohon untuk memperbaiki/revisi permintaan anda sesuai dengan catatan penolakan yang diberikan oleh atasan. Setelah permintaan selesai di perbaiki/revisi, permintaan anda akan di review ulang oleh atasan anda.',
       tombol: {
