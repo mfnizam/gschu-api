@@ -136,10 +136,10 @@ router.get('/testnotif', async (req, res) => {
 
 router.get('/testemail', async (req, res) => {
 	let mailOptions = {
-		from: '"Layspeed" <noreply@layspeed.com>', // sender address
+		from: '"GSCHU Pertamina Zona 1" <noreply@gschuz1.com>', // sender address
 		to: 'fatikhunnizam@gmail.com', //req.body.to, // list of receivers
-		subject: 'Test', //req.body.subject, // Subject line
-		text: 'Test email dari server', //req.body.body, // plain text body
+		subject: 'Reset Password', //req.body.subject, // Subject line
+		text: 'Test email dari server untuk reset password', //req.body.body, // plain text body
 		html: '<b>NodeJS Email Test</b>' // html body
 	};
 
@@ -148,7 +148,7 @@ router.get('/testemail', async (req, res) => {
 			return res.json(error);
 		}
 		// console.log('Message %s sent: %s', info.messageId, info.response);
-		res.json('Message %s sent: %s', info.messageId, info.response);
+		res.json(`Message ${info.messageId} sent: ${info.response}`,);
 	});
 })
 

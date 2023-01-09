@@ -1,7 +1,8 @@
 const router = require('express').Router(),
 	jwt = require('jsonwebtoken'),
 	passport = require('passport'),
-	secret = require('../secret');
+	secret = require('../secret'),
+	transporter = require('../nodemail');
 
 // TODO
 // - penerapan accessToken dan refreshToken
@@ -95,16 +96,39 @@ router.post('/lupasandi', async (req, res) => {
 
 		// delete semua otp pada email, karna hanya berlaku 1 otp pada setiap email.
 		await Otp.deleteMany({ email: req.body.email })
-
+		let email = req.body.email;
+		let kode = await m.generateRandonNum(Otp, 'kode', { kadaluarsa: { $gte: new Date() }, status: { $nin: [0, 3] }}, 1111, 9999);
 		let otp = await Otp.create({
-			email: req.body.email,
-			kode: await m.generateRandonNum(Otp, 'kode', { kadaluarsa: { $gte: new Date() }, status: { $nin: [0, 3] }}, 1111, 9999),
+			email,
+			kode,
 			keperluan: 0,
 			kadaluarsa: new Date(new Date().getTime() + (15*60000))
 		})
+
+		let emailBody = `
+			Hai ${email},
+			<br>
+			<br>
+			Kami menerima permintaan kode sekali pakai yang akan digunakan dengan akun GSCHU Anda.
+			<br>
+			<br>
+			Kode sekali pakai Anda adalah: <h2>${kode}</h2>
+			<br>
+			<br>
+			Jika Anda tidak meminta kode ini, Anda dengan aman dapat mengabaikan email ini. Orang lain mungkin telah salah dalam mengetik alamat email.
+			<br>
+			<br>
+			<br>
+			Terima kasih,
+			<br>
+			Tim GSCHU Zona 1
+		`
+
+		let emailSend = await sendEmail(email, emailBody, 'Reset Password');
 		
-		return res.json( { success: otp.kode? true : false, kadaluarsa: otp.kadaluarsa } );
+		return res.json( { success: otp.kode? true : false, kadaluarsa: otp.kadaluarsa, emailRes: emailSend } );
 	} catch (err) {
+		console.log(err)
 		return sendError(res, (err.code || 500), err);
 	}
 })
@@ -161,6 +185,26 @@ function sendError(res, code, err = {}) {
 	res.statusMessage = err.msg || 'Terjadi kesalahan, coba lagi.';
 	res.statusText = err.msg || 'Terjadi kesalahan, coba lagi.';
 	return res.status(code).json(err);
+}
+
+function sendEmail(to, text, subject){
+	return new Promise((resolve, reject) => {
+		let mailOptions = {
+			from: '"GSCHU Pertamina Zona 1" <noreply@gschuz1.com>', // sender address
+			to, //req.body.to, // list of receivers
+			subject, //req.body.subject, // Subject line
+			// text, //req.body.body, // plain text body
+			html: text // html body
+		};
+
+		transporter.sendMail(mailOptions, (error, info) => {
+			console.log(error, info)
+			if (error) return reject(error)
+			return resolve(info)
+		});
+	})
+
+
 }
 
 module.exports = router;
